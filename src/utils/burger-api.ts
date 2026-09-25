@@ -72,7 +72,7 @@ export const fetchWithRefresh = async <T>(
       const res = await fetch(url, options);
       return await checkResponse<T>(res);
     } else {
-      return Promise.reject(toApiError(err));
+      return Promise.reject(err);
     }
   }
 };
