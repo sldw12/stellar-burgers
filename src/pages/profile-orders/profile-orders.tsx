@@ -1,10 +1,29 @@
 import { ProfileOrdersUI } from '@ui-pages';
+import { useEffect } from 'react';
 
-import type { TOrder } from '@utils-types';
+import { connectOrderStream } from '../../services/order-stream';
+import { fetchHistory } from '../../services/slices/orders';
+import { useDispatch, useSelector } from '../../services/store';
 
 export const ProfileOrders = (): React.JSX.Element => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = [];
+  const dispatch = useDispatch();
+  const { orders, error } = useSelector((state) => state.history);
+  useEffect(() => {
+    void dispatch(fetchHistory());
+    const disconnect = connectOrderStream(true);
+    const timer = window.setInterval(() => {
+      void dispatch(fetchHistory());
+    }, 10000);
+    return (): void => {
+      window.clearInterval(timer);
+      disconnect();
+    };
+  }, [dispatch]);
 
-  return <ProfileOrdersUI orders={orders} />;
+  return (
+    <>
+      {error && <p role="alert">{error}</p>}
+      <ProfileOrdersUI orders={orders} />
+    </>
+  );
 };
