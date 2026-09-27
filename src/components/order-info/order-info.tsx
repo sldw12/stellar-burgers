@@ -1,21 +1,41 @@
 import { Preloader, OrderInfoUI } from '@ui';
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import type { TIngredient } from '@utils-types';
+import { useSelector } from '../../services/store';
+import { getOrderByNumberApi } from '../../utils/burger-api';
+
+import type { TOrder, TIngredient } from '@utils-types';
 
 export const OrderInfo = (): React.JSX.Element => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0,
-  };
-
-  const ingredients: TIngredient[] = [];
+  const { number } = useParams();
+  const feedOrder = useSelector((state) =>
+    state.feed.orders.find((item) => String(item.number) === number)
+  );
+  const historyOrder = useSelector((state) =>
+    state.history.orders.find((item) => String(item.number) === number)
+  );
+  const [loadedOrder, setLoadedOrder] = useState<TOrder | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const orderData = feedOrder ?? historyOrder ?? loadedOrder;
+  const ingredients = useSelector((state) => state.ingredients.items);
+  useEffect(() => {
+    if (orderData || !number || !Number.isFinite(Number(number))) return;
+    let active = true;
+    void getOrderByNumberApi(Number(number))
+      .then((data) => {
+        if (active) {
+          if (data.orders[0]) setLoadedOrder(data.orders[0]);
+          else setError('Заказ не найден');
+        }
+      })
+      .catch((err: Error) => {
+        if (active) setError(err.message);
+      });
+    return (): void => {
+      active = false;
+    };
+  }, [number, orderData]);
 
   /**
    * использование useMemo не обязательно
@@ -60,8 +80,10 @@ export const OrderInfo = (): React.JSX.Element => {
     };
   }, [orderData, ingredients]);
 
+  if (!number || !Number.isFinite(Number(number)))
+    return <p role="alert">Неверный номер заказа</p>;
   if (!orderInfo) {
-    return <Preloader />;
+    return error ? <p role="alert">{error}</p> : <Preloader />;
   }
 
   return <OrderInfoUI orderInfo={orderInfo} />;
