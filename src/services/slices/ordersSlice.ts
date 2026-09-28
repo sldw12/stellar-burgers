@@ -1,5 +1,6 @@
 import { getOrderByNumberApi, getOrdersApi } from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import type { TOrder } from '@utils-types';
 
 type TOrdersState = {
@@ -16,9 +17,8 @@ export const initialOrdersState: TOrdersState = {
   error: null,
 };
 
-export const fetchOrders = createAsyncThunk(
-  'orders/fetchOrders',
-  async () => getOrdersApi()
+export const fetchOrders = createAsyncThunk('orders/fetchOrders', async () =>
+  getOrdersApi()
 );
 export const fetchOrderByNumber = createAsyncThunk(
   'orders/fetchOrderByNumber',
@@ -48,8 +48,7 @@ const ordersSlice = createSlice({
       })
       .addCase(fetchOrders.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =
-          action.error.message ?? 'Не удалось загрузить заказы';
+        state.error = action.error.message ?? 'Не удалось загрузить заказы';
       })
       .addCase(fetchOrderByNumber.pending, (state) => {
         state.isLoading = true;
@@ -61,8 +60,7 @@ const ordersSlice = createSlice({
       })
       .addCase(fetchOrderByNumber.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =
-          action.error.message ?? 'Не удалось загрузить заказ';
+        state.error = action.error.message ?? 'Не удалось загрузить заказ';
       });
   },
 });

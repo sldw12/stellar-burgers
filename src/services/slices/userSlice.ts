@@ -115,9 +115,7 @@ const userSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =
-          action.error.message ??
-          'Не удалось зарегистрироваться';
+        state.error = action.error.message ?? 'Не удалось зарегистрироваться';
       })
       .addCase(updateUser.pending, (state) => {
         state.isLoading = true;
@@ -129,8 +127,7 @@ const userSlice = createSlice({
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =
-          action.error.message ?? 'Не удалось обновить профиль';
+        state.error = action.error.message ?? 'Не удалось обновить профиль';
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;

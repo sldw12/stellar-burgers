@@ -3,14 +3,14 @@ import {
   clearConstructor,
   constructorReducer,
   moveIngredient,
-  removeIngredient
+  removeIngredient,
 } from '../constructor';
 
 import type { TConstructorIngredient, TIngredient } from '@utils-types';
 
 const initialConstructorState = {
   bun: null,
-  ingredients: []
+  ingredients: [],
 };
 
 const bun: TIngredient = {
@@ -24,7 +24,7 @@ const bun: TIngredient = {
   price: 100,
   image: 'bun.png',
   image_large: 'bun-large.png',
-  image_mobile: 'bun-mobile.png'
+  image_mobile: 'bun-mobile.png',
 };
 
 const main: TIngredient = {
@@ -32,13 +32,13 @@ const main: TIngredient = {
   _id: 'main-1',
   name: 'Тестовая начинка',
   type: 'main',
-  price: 200
+  price: 200,
 };
 
 const secondMain: TIngredient = {
   ...main,
   _id: 'main-2',
-  name: 'Вторая начинка'
+  name: 'Вторая начинка',
 };
 
 const constructorIngredient = (
@@ -46,23 +46,20 @@ const constructorIngredient = (
   id: string
 ): TConstructorIngredient => ({
   ...ingredient,
-  id
+  id,
 });
 
 describe('constructor reducer', () => {
   test('returns initial state for unknown action', () => {
-    expect(
-      constructorReducer(undefined, { type: 'UNKNOWN' })
-    ).toEqual(initialConstructorState);
+    expect(constructorReducer(undefined, { type: 'UNKNOWN' })).toEqual(
+      initialConstructorState
+    );
   });
 
   test('handles addIngredient for bun', () => {
     const action = addIngredient(bun);
 
-    const state = constructorReducer(
-      initialConstructorState,
-      action
-    );
+    const state = constructorReducer(initialConstructorState, action);
 
     expect(state.bun).toEqual(action.payload);
     expect(state.ingredients).toEqual([]);
@@ -71,10 +68,7 @@ describe('constructor reducer', () => {
   test('handles addIngredient for filling', () => {
     const action = addIngredient(main);
 
-    const state = constructorReducer(
-      initialConstructorState,
-      action
-    );
+    const state = constructorReducer(initialConstructorState, action);
 
     expect(state.bun).toBeNull();
     expect(state.ingredients).toEqual([action.payload]);
@@ -86,7 +80,7 @@ describe('constructor reducer', () => {
     const state = constructorReducer(
       {
         ...initialConstructorState,
-        ingredients: [ingredient]
+        ingredients: [ingredient],
       },
       removeIngredient('main-id')
     );
@@ -101,25 +95,22 @@ describe('constructor reducer', () => {
     const state = constructorReducer(
       {
         ...initialConstructorState,
-        ingredients: [first, second]
+        ingredients: [first, second],
       },
       moveIngredient({
         from: 0,
-        to: 1
+        to: 1,
       })
     );
 
-    expect(state.ingredients.map((item) => item.id))
-      .toEqual(['second', 'first']);
+    expect(state.ingredients.map((item) => item.id)).toEqual(['second', 'first']);
   });
 
   test('handles clearConstructor', () => {
     const state = constructorReducer(
       {
         bun: constructorIngredient(bun, 'bun-id'),
-        ingredients: [
-          constructorIngredient(main, 'main-id')
-        ]
+        ingredients: [constructorIngredient(main, 'main-id')],
       },
       clearConstructor()
     );

@@ -63,17 +63,19 @@ export const fetchWithRefresh = async <T>(
     const res = await fetch(url, options);
     return await checkResponse<T>(res);
   } catch (err) {
-    if ((err as { message: string }).message === 'jwt expired') {
+    if (err instanceof Error && err.message === 'jwt expired') {
       const refreshData = await refreshToken();
+
       if (options.headers) {
         (options.headers as Record<string, string>).authorization =
           refreshData.accessToken;
       }
+
       const res = await fetch(url, options);
       return await checkResponse<T>(res);
-    } else {
-      return Promise.reject(err);
     }
+
+    return Promise.reject(err instanceof Error ? err : new Error(String(err)));
   }
 };
 

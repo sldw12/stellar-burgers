@@ -1,5 +1,6 @@
 import { getFeedsApi } from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import type { TFeedState } from '@utils-types';
 
 export const initialFeedState: TFeedState = {
@@ -30,8 +31,7 @@ const feedSlice = createSlice({
       })
       .addCase(fetchFeeds.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =
-          action.error.message ?? 'Не удалось загрузить ленту';
+        state.error = action.error.message ?? 'Не удалось загрузить ленту';
       });
   },
 });

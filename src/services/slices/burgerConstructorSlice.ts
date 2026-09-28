@@ -90,8 +90,7 @@ const burgerConstructorSlice = createSlice({
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.orderRequest = false;
-        state.error =
-          action.error.message ?? 'Не удалось оформить заказ';
+        state.error = action.error.message ?? 'Не удалось оформить заказ';
       });
   },
 });

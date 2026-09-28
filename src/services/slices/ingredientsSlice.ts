@@ -36,9 +36,7 @@ const ingredientsSlice = createSlice({
       })
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.isLoading = false;
-        state.error =
-          action.error.message ??
-          'Не удалось загрузить ингредиенты';
+        state.error = action.error.message ?? 'Не удалось загрузить ингредиенты';
       });
   },
 });

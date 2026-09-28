@@ -3,6 +3,7 @@ import {
   ingredientsReducer,
   initialIngredientsState,
 } from '../ingredientsSlice';
+
 import type { TIngredient } from '@utils-types';
 
 const mockIngredients: TIngredient[] = [
