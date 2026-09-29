@@ -36,10 +36,11 @@ test.describe('constructor works correctly', () => {
       'Биокотлета из марсианской Магнолии'
     );
 
-    await expect(modal).toContainText('Калории');
-    await expect(modal).toContainText('Белки');
-    await expect(modal).toContainText('Жиры');
-    await expect(modal).toContainText('Углеводы');
+    // Проверяем реальные данные ингредиента
+    await expect(modal).toContainText('4242'); // калории
+    await expect(modal).toContainText('420');  // белки
+    await expect(modal).toContainText('142');  // жиры
+    await expect(modal).toContainText('242');  // углеводы
 
     await page.getByLabel('Закрыть').click();
 
@@ -65,10 +66,18 @@ test.describe('constructor works correctly', () => {
       page.getByTestId('order-number')
     ).toHaveText('424242');
 
+    // Проверяем очистку начинки
     await expect(
       page.getByTestId('constructor-ingredients')
     ).not.toContainText(
       'Биокотлета из марсианской Магнолии'
+    );
+
+    // Проверяем очистку булки
+    await expect(
+      page.getByTestId('constructor-ingredients')
+    ).not.toContainText(
+      'Краторная булка N-200i'
     );
   });
 });
