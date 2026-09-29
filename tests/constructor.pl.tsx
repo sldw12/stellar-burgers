@@ -7,14 +7,16 @@ test.describe('constructor works correctly', () => {
       update: false,
     });
 
+    await page.addInitScript(() => {
+      localStorage.setItem('refreshToken', 'test-refresh-token');
+      document.cookie = 'accessToken=test-access-token';
+    });
+
     await page.goto('/');
   });
 
   test('should add ingredient to constructor', async ({ page }) => {
-    const ingredientCard = page
-      .getByText('Биокотлета из марсианской Магнолии')
-      .locator('..')
-      .locator('..');
+    const ingredientCard = page.getByTestId('ingredient-main-1');
 
     await ingredientCard.getByText('Добавить').click();
 
@@ -24,42 +26,36 @@ test.describe('constructor works correctly', () => {
   });
 
   test('should open and close ingredient modal', async ({ page }) => {
-    await page
-      .getByText('Биокотлета из марсианской Магнолии')
-      .click();
+    await page.getByTestId('ingredient-main-1').click();
 
-    await expect(
-      page.getByText('Детали ингредиента')
-    ).toBeVisible();
+    const modal = page.getByTestId('ingredient-modal');
+
+    await expect(modal).toBeVisible();
+
+    await expect(modal).toContainText(
+      'Биокотлета из марсианской Магнолии'
+    );
+
+    await expect(modal).toContainText('Калории');
+    await expect(modal).toContainText('Белки');
+    await expect(modal).toContainText('Жиры');
+    await expect(modal).toContainText('Углеводы');
 
     await page.getByLabel('Закрыть').click();
 
-    await expect(
-      page.getByText('Детали ингредиента')
-    ).not.toBeVisible();
+    await expect(modal).not.toBeVisible();
   });
 
-  test('should create order successfully', async ({ page }) => {
-    await page.evaluate(() => {
-      localStorage.setItem('refreshToken', 'test-refresh-token');
-      document.cookie = 'accessToken=test-access-token';
-    });
-
-    await page.reload();
-
-    const bun = page.getByText('Краторная булка N-200i');
-
-    await bun
-      .locator('..')
-      .locator('..')
+  test('should create order successfully and clear constructor', async ({
+    page,
+  }) => {
+    await page
+      .getByTestId('ingredient-bun-1')
       .getByText('Добавить')
       .click();
 
-    const ingredient = page.getByText('Биокотлета из марсианской Магнолии');
-
-    await ingredient
-      .locator('..')
-      .locator('..')
+    await page
+      .getByTestId('ingredient-main-1')
       .getByText('Добавить')
       .click();
 
@@ -68,5 +64,11 @@ test.describe('constructor works correctly', () => {
     await expect(
       page.getByTestId('order-number')
     ).toHaveText('424242');
+
+    await expect(
+      page.getByTestId('constructor-ingredients')
+    ).not.toContainText(
+      'Биокотлета из марсианской Магнолии'
+    );
   });
 });
